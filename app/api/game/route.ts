@@ -27,11 +27,14 @@ export async function POST(req: Request, res: Response) {
         userId: session.user.id,
       },
     });
-    const { data } = await axios.post(`${process.env.API_URL}/api/questions`, {
-      amount,
-      topic,
-      type,
-    });
+    const { data } = await axios.post(
+      `${process.env.API_URL as string}/api/questions`,
+      {
+        amount,
+        topic,
+        type,
+      }
+    );
 
     if (type === "mcq") {
       type mcqQuestion = {
@@ -42,7 +45,12 @@ export async function POST(req: Request, res: Response) {
         option3: string;
       };
       let manyData = data.questions.map((question: mcqQuestion) => {
-        let options = [question.option1, question.option2, question.option3];
+        let options = [
+          question.option1,
+          question.option2,
+          question.option3,
+          question.answer,
+        ];
         options = options.sort(() => Math.random() - 0.5);
         return {
           question: question.question,
