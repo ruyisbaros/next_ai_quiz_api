@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardTitle,
@@ -9,7 +9,7 @@ import {
 } from "./ui/card";
 import { useForm } from "react-hook-form";
 import { quizCreationSchema } from "@/schema/form/quiz";
-import { z } from "zod";
+import { boolean, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +27,7 @@ import { Separator } from "./ui/separator";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import LoadingFromGBT from "./LoadingFromGBT";
 
 type Props = {};
 
@@ -34,6 +35,8 @@ type Input = z.infer<typeof quizCreationSchema>;
 
 const QuizCreation = (props: Props) => {
   const router = useRouter();
+  const [showLoader, setShowLoader] = useState<boolean>(false);
+  const [finished, setFinished] = useState<boolean>(false);
   const { mutate: getQuestions, isPending } = useMutation({
     mutationFn: async ({ amount, topic, type }: Input) => {
       const { data } = await axios.post("/api/game", { amount, topic, type });
@@ -50,6 +53,7 @@ const QuizCreation = (props: Props) => {
   });
 
   const onSubmit = (input: Input) => {
+    setShowLoader(true);
     getQuestions(
       {
         amount: input.amount,
@@ -58,20 +62,30 @@ const QuizCreation = (props: Props) => {
       },
       {
         onSuccess: ({ gameId }) => {
-          if (form.getValues("type") === "open_ended") {
-            router.push(`/play/open_ended/${gameId}`);
-          } else if (form.getValues("type") === "mcq") {
-            router.push(`/play/mcq/${gameId}`);
-          }
+          setFinished(true);
+          setTimeout(() => {
+            if (form.getValues("type") === "open_ended") {
+              router.push(`/play/open_ended/${gameId}`);
+            } else if (form.getValues("type") === "mcq") {
+              router.push(`/play/mcq/${gameId}`);
+            }
+          }, 1000);
         },
-        onError: () => {},
+        onError: () => {
+          setShowLoader(false);
+        },
       }
     );
   };
   form.watch();
   console.log(form.watch());
+
+  /* Animation Loader */
+  if (showLoader) {
+    return <LoadingFromGBT finished={finished} />;
+  }
   return (
-    <div className=" absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <Card>
         <CardHeader>
           <CardTitle className="font-bold text-2xl">Quiz Creation</CardTitle>
@@ -155,9 +169,11 @@ const QuizCreation = (props: Props) => {
                   <BookOpen className="h-4 w-4 mr-2" /> Open Ended
                 </Button>
               </div>
-              <Button disabled={isPending} type="submit">
-                Submit
-              </Button>
+              <div className="w-full flex items-center justify-center">
+                <Button disabled={isPending} type="submit">
+                  Submit
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>
