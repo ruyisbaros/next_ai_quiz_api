@@ -14,11 +14,20 @@ const OpenEndedPage = async ({ params: { gameId } }: Props) => {
     where: {
       id: gameId,
     },
+    include: {
+      questions: {
+        select:{
+          id:true,
+          question:true,
+          answer:true
+        }
+      }
+    },
   });
   if (!game || game.gameType !== "open_ended") {
     return redirect("/quiz");
   }
-  return <OpenEnded />;
+  return <OpenEnded game={game} />;
 };
 
 export default OpenEndedPage;

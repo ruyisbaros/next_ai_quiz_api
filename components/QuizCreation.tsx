@@ -69,6 +69,7 @@ const QuizCreation = (props: Props) => {
     );
   };
   form.watch();
+  console.log(form.watch());
   return (
     <div className=" absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <Card>
@@ -112,7 +113,7 @@ const QuizCreation = (props: Props) => {
                       <Input
                         type="number"
                         min={1}
-                        max={10}
+                        max={5}
                         placeholder="Enter an amount..."
                         {...field}
                         onChange={(e) => {

@@ -23,10 +23,10 @@ const McqPage = async ({ params: { gameId } }: Props) => {
       questions: true,
     },
   });
-  if (!game||game.gameType!=="mcq") {
+  if (!game || game.gameType !== "mcq") {
     return redirect("/quiz");
   }
-  return <MCQ game={game}/>
+  return <MCQ game={game} />;
 };
 
 export default McqPage;

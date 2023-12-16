@@ -19,7 +19,8 @@ export const POST = async (req: Request, res: Response) => {
     const body = await req.json();
     const { amount, type, topic } = quizCreationSchema.parse(body);
     let questions: any;
-
+    console.log(amount);
+    console.log(typeof amount);
     if (type === "mcq") {
       questions = await strict_output(
         "You are a helpful AI that is able to generate mcq questions and answers, the length of each answer should not be more than 15 words, store all answers and questions and options in a JSON array",
