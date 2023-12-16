@@ -10,6 +10,10 @@ import {
 import { getAuthSession } from "@/lib/nextAuth";
 import { redirect } from "next/navigation";
 
+export const metadata = {
+  title: "Sign In",
+};
+
 export default async function Home() {
   const session = await getAuthSession();
   if (session?.user) {

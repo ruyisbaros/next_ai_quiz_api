@@ -26,6 +26,7 @@ const MCQ = ({ game }: Props) => {
   const [now, setNow] = useState<Date>(new Date());
   const [hasEnded, setHasEnded] = useState<boolean>(false);
   const { toast } = useToast();
+  let endedTime: Date;
   const currentQuestion = React.useMemo(() => {
     return game.questions[questionIndex];
   }, [questionIndex, game.questions]);
@@ -42,6 +43,8 @@ const MCQ = ({ game }: Props) => {
       const payload: z.infer<typeof checkAnswerSchema> = {
         questionId: currentQuestion.id,
         userAnswer: options[selectedChoice],
+        endedTime,
+        gameId: game.id,
       };
       const { data } = await axios.post("/api/checkAnswer", payload);
       return data;
@@ -106,6 +109,7 @@ const MCQ = ({ game }: Props) => {
   }, [handleNext]);
 
   if (hasEnded) {
+    endedTime = new Date();
     return (
       <div className="absoluteCenter flex flex-col justify-center">
         <div className="px-4 py-2 mt-2 font-semibold text-white bg-green-500 rounded-md whitespace-nowrap">

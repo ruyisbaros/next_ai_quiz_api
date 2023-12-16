@@ -4,8 +4,8 @@ import { Hourglass } from "lucide-react";
 import { formatTimeDelta } from "@/lib/utils";
 import { differenceInSeconds } from "date-fns";
 type Props = {
-  timeEnded: Date;
-  timeStarted: Date;
+  timeEnded: Date | null;
+  timeStarted: Date | null;
 };
 
 const TimeTakenCard = ({ timeEnded, timeStarted }: Props) => {
@@ -17,7 +17,9 @@ const TimeTakenCard = ({ timeEnded, timeStarted }: Props) => {
       </CardHeader>
       <CardContent>
         <div className="text-sm font-medium">
-          {formatTimeDelta(differenceInSeconds(timeEnded, timeStarted))}
+          {timeEnded !== null &&
+            timeStarted !== null &&
+            formatTimeDelta(differenceInSeconds(timeEnded, timeStarted))}
         </div>
       </CardContent>
     </Card>
