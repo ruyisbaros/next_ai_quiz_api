@@ -43,8 +43,6 @@ const MCQ = ({ game }: Props) => {
       const payload: z.infer<typeof checkAnswerSchema> = {
         questionId: currentQuestion.id,
         userAnswer: options[selectedChoice],
-        endedTime,
-        gameId: game.id,
       };
       const { data } = await axios.post("/api/checkAnswer", payload);
       return data;
@@ -177,14 +175,21 @@ const MCQ = ({ game }: Props) => {
                 <div className="p-2 px-3 mr-5 border rounded-md">
                   {index + 1}
                 </div>
-                <div className="text-start">{option}</div>
+                {option.length > 100 ? (
+                  <div className="text-start">
+                    {option.slice(0, 100)} <br />
+                    {option.slice(100, option.length)}
+                  </div>
+                ) : (
+                  <div className="text-start">{option}</div>
+                )}
               </div>
             </Button>
           );
         })}
 
         <Button className="mt-2" onClick={handleNext} disabled={isChecking}>
-          {isChecking && <Loader2 className="mr-3 w-4 h-4 animated-spin" />}
+          {isChecking && <Loader2 className="mr-3 w-4 h-4 animate-spin" />}
           Next <ChevronRight className="ml-3 w-4 h-4" />
         </Button>
       </div>

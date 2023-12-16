@@ -9,11 +9,9 @@ import { compareTwoStrings } from "string-similarity";
 export async function POST(req: Request, res: Response) {
   try {
     const body = await req.json();
-    const { userAnswer, questionId, endedTime, gameId } =
+    const { userAnswer, questionId } =
       checkAnswerSchema.parse(body);
-    const game = await prisma.game.findUnique({
-      where: { id: gameId },
-    });
+    
     const question = await prisma.question.findUnique({
       where: {
         id: questionId,
@@ -42,12 +40,12 @@ export async function POST(req: Request, res: Response) {
         where: { id: questionId },
         data: { isCorrect },
       });
-      if (endedTime && game) {
+      /* if (endedTime && game) {
         await prisma.game.update({
           where: { id: game.id },
           data: { timeEnded: endedTime },
         });
-      }
+      } */
       return NextResponse.json({ isCorrect }, { status: 200 });
     } else if (question.questionType === "open_ended") {
       let percentageSimilar = compareTwoStrings(
@@ -59,12 +57,12 @@ export async function POST(req: Request, res: Response) {
         where: { id: questionId },
         data: { percentageCorrect: percentageSimilar },
       });
-      if (endedTime && game) {
+     /*  if (endedTime && game) {
         await prisma.game.update({
           where: { id: game.id },
           data: { timeEnded: endedTime },
         });
-      }
+      } */
       return NextResponse.json({ percentageSimilar }, { status: 200 });
     }
   } catch (error) {

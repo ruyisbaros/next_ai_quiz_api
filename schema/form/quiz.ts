@@ -12,6 +12,4 @@ export const quizCreationSchema = z.object({
 export const checkAnswerSchema = z.object({
   questionId: z.string(),
   userAnswer: z.string(),
-  endedTime: z.date(),
-  gameId: z.string(),
 });
