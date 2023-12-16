@@ -1,21 +1,18 @@
 "use client";
 import { Game, Question } from "@prisma/client";
-import { ChevronRight, Timer } from "lucide-react";
+import { BarChart, ChevronRight, Loader2, Timer } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-import { Button } from "./ui/button";
+import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Button, buttonVariants } from "./ui/button";
 import MCQCounter from "./MCQCounter";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { z } from "zod";
 import { checkAnswerSchema } from "@/schema/form/quiz";
 import { useToast } from "./ui/use-toast";
+import Link from "next/link";
+import { cn, formatTimeDelta } from "@/lib/utils";
+import { differenceInSeconds } from "date-fns";
 
 type Props = {
   game: Game & { questions: Question[] };
@@ -26,6 +23,8 @@ const MCQ = ({ game }: Props) => {
   const [selectedChoice, setSelectedChoice] = useState<number>(0);
   const [correctAnswers, setCorrectAnswers] = useState<number>(0);
   const [wrongAnswers, setWrongAnswers] = useState<number>(0);
+  const [now, setNow] = useState<Date>(new Date());
+  const [hasEnded, setHasEnded] = useState<boolean>(false);
   const { toast } = useToast();
   const currentQuestion = React.useMemo(() => {
     return game.questions[questionIndex];
@@ -66,12 +65,63 @@ const MCQ = ({ game }: Props) => {
           });
           setWrongAnswers((prev) => prev + 1);
         }
+        if (questionIndex === game.questions.length - 1) {
+          setHasEnded(true);
+          return;
+        }
         setQuestionIndex((prev) => prev + 1);
       },
     });
-  }, [checkAnswer, toast, isChecking]);
+  }, [checkAnswer, toast, isChecking, game.questions.length, questionIndex]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    let interval = setInterval(() => {
+      if (!hasEnded) {
+        setNow(new Date());
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [hasEnded]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "1") {
+        setSelectedChoice(0);
+      } else if (e.key === "2") {
+        setSelectedChoice(1);
+      } else if (e.key === "3") {
+        setSelectedChoice(2);
+      } else if (e.key === "4") {
+        setSelectedChoice(3);
+      } else if (e.key === "Enter") {
+        handleNext();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleNext]);
+
+  if (hasEnded) {
+    return (
+      <div className="absoluteCenter flex flex-col justify-center">
+        <div className="px-4 py-2 mt-2 font-semibold text-white bg-green-500 rounded-md whitespace-nowrap">
+          You completed in{" "}
+          {formatTimeDelta(differenceInSeconds(now, game.timeStarted))}
+        </div>
+        <Link
+          href={`/statistics/${game.id}`}
+          className={cn(buttonVariants(), "mt-4")}
+        >
+          View Statistics
+          <BarChart className="ml-3 w-4 h-4" />
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="absoluteCenter max-w-4xl sm:w-[90vw] md:w-[80vw] ">
@@ -85,7 +135,9 @@ const MCQ = ({ game }: Props) => {
           </p>
           <div className="flex self-start mt-3 text-slate-400">
             <Timer className="mr-2" />
-            <span>00:00</span>
+            <span>
+              {formatTimeDelta(differenceInSeconds(now, game.timeStarted))}
+            </span>
           </div>
         </div>
         <MCQCounter
@@ -128,6 +180,7 @@ const MCQ = ({ game }: Props) => {
         })}
 
         <Button className="mt-2" onClick={handleNext} disabled={isChecking}>
+          {isChecking && <Loader2 className="mr-3 w-4 h-4 animated-spin" />}
           Next <ChevronRight className="ml-3 w-4 h-4" />
         </Button>
       </div>
