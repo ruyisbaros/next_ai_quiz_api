@@ -23,9 +23,9 @@ export const POST = async (req: Request, res: Response) => {
     console.log(typeof amount);
     if (type === "mcq") {
       questions = await strict_output(
-        "You are a helpful AI that is able to generate mcq questions and answers, the length of each answer should not be more than 15 words, store all answers and questions and options in a JSON array",
+        "You are a helpful AI that is able to generate multiple-choice questions and answers, the length of each answer should not be more than 15 words, store all answers and questions and options in a JSON array",
         new Array(amount).fill(
-          `You are to generate a random hard mcq question about ${topic}`
+          `You are to generate a random medium multiple-choice question about ${topic}`
         ),
         {
           question: "question",

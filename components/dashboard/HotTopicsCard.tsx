@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import {
   Card,
@@ -7,21 +6,21 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { History } from "lucide-react";
-import { useRouter } from "next/navigation";
 import CustomWords from "../CustomWords";
+import { prisma } from "@/lib/db";
 
 type Props = {};
 
-const HotTopicsCard = (props: Props) => {
-  const router = useRouter();
+const HotTopicsCard = async (props: Props) => {
+  const topics = await prisma.topic_count.findMany({});
+  const formattedTopics = topics.map((top) => {
+    return {
+      text: top.topic,
+      value: top.count,
+    };
+  });
   return (
-    <Card
-      className="col-span-4"
-      onClick={() => {
-        router.push("/history");
-      }}
-    >
+    <Card className="col-span-4">
       <CardHeader className="">
         <CardTitle className="text-2xl font-bold">Hot Topics!</CardTitle>
         <CardDescription>
@@ -29,7 +28,7 @@ const HotTopicsCard = (props: Props) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="pl-2">
-        <CustomWords/>
+        <CustomWords formattedTopics={formattedTopics} />
       </CardContent>
     </Card>
   );

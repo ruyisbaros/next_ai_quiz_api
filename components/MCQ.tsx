@@ -175,14 +175,7 @@ const MCQ = ({ game }: Props) => {
                 <div className="p-2 px-3 mr-5 border rounded-md">
                   {index + 1}
                 </div>
-                {option.length > 100 ? (
-                  <div className="text-start">
-                    {option.slice(0, 100)} <br />
-                    {option.slice(100, option.length)}
-                  </div>
-                ) : (
-                  <div className="text-start">{option}</div>
-                )}
+                <div className="text-start">{option.slice(0, 120)}...</div>
               </div>
             </Button>
           );

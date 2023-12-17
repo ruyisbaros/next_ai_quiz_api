@@ -3,27 +3,32 @@ import { useTheme } from "next-themes";
 import React from "react";
 import D3WordCloud from "react-d3-cloud";
 
-type Props = {};
+type Props = {
+  formattedTopics: {
+    text: string;
+    value: number;
+  }[];
+};
 
 const data = [
   {
-    text: "HTML",
-    value: 3,
+    text: "java development",
+    value: 13,
   },
   {
-    text: "CSS",
-    value: 5,
-  },
-  {
-    text: "React",
+    text: "calculus",
     value: 10,
   },
   {
-    text: "Next Js",
+    text: "java script",
     value: 8,
   },
   {
-    text: "Typescript",
+    text: "books",
+    value: 12,
+  },
+  {
+    text: "cats",
     value: 7,
   },
   {
@@ -32,10 +37,6 @@ const data = [
   },
   {
     text: "Redux",
-    value: 12,
-  },
-  {
-    text: "Next-Auth",
     value: 2,
   },
 ];

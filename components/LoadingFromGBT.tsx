@@ -31,7 +31,7 @@ const LoadingFromGBT = ({ finished }: Props) => {
         if (Math.random() < 0.1) {
           return prev + 1;
         }
-        return prev + 0.3;
+        return prev + 0.25;
       });
     }, 100);
     return () => clearInterval(interval);

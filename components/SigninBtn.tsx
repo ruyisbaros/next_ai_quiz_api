@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { Button } from "./ui/button";
 import { signIn } from "next-auth/react";
@@ -10,11 +10,10 @@ type Props = {
 const SignInBtn = ({ text }: Props) => {
   return (
     <Button
-      
       onClick={() => {
         signIn("google").catch((error) => console.log(error));
       }}
-      className="dark:text-white"
+      className="dark:text-white dark:bg-gray-700"
     >
       {text}
     </Button>
